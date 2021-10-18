@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tugas 3</title>
+    <!-- Library  Salman-->
     <script src = "js/three.min.js"></script>
     <script src = "js/controls/OrbitControls.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
@@ -83,6 +84,7 @@
         }
     </style>
 </head>
+<!-- maul dan Inu -->
 <body>
     <div id="mainmenu">
         <div class="menu-container" style="display: flex; flex-direction: column; justify-content: center;">
@@ -166,6 +168,7 @@
     let selectedObject = []; // menyimpan objek yang sudah dipilih
     let originalColors = []; // menyimpan warna asli yang sudah di generate
     
+    // Fikri Sunandar
     let onMouseClick = function(e) {
         mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
@@ -233,6 +236,7 @@
     };
 
     // generate sphere baru
+    // Fikri Sandi
     let speed = 3000;
     const baseSpeed = 3000;
 
@@ -290,6 +294,7 @@
     
     // set up the environment - 
     // initiallize scene, camera, objects and renderer
+    // Fikri Sandi
     let init = function() {
         // create the scene
         scene = new THREE.Scene();
@@ -332,19 +337,20 @@
     const clock = new THREE.Clock();
 
     let mainLoop = function() {
-        const elapsedTime = clock.getElapsedTime();
+        // const elapsedTime = clock.getElapsedTime();
 
-        if (selectedObject.length == 1) {
-            selectedObject[0][0].object.material.emissive.setHex(elapsedTime % 0.5 >= 0.25 ? originalColors[0] : (originalColors[0] * 3));
-            selectedObject[0][0].object.rotation.y += 10;
-            selectedObject[0][0].object.rotation.x += 10;
-        }
+        // if (selectedObject.length == 1) {
+        //     selectedObject[0][0].object.material.emissive.setHex(elapsedTime % 0.5 >= 0.25 ? originalColors[0] : (originalColors[0] * 3));
+        //     selectedObject[0][0].object.rotation.y += 10;
+        //     selectedObject[0][0].object.rotation.x += 10;
+        // }
         
         renderer.render(scene, camera);
         controls.update();        
         window.requestAnimationFrame(mainLoop);
     };
 
+    // Zahra
     document.querySelector('#start-button').addEventListener('click', (event) => {
     document.querySelector('#mainmenu').style.display = 'none';
     document.body.requestPointerLock();
