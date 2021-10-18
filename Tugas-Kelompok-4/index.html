@@ -14,10 +14,21 @@
             padding: 0;
         }
         .scoreboard {
+            font-family: 'Optima';
             position: absolute;
             padding: 15px;
             font-size: 1.5rem;
             color: antiquewhite;
+        }
+        .lighting {
+            text-align:center;
+            position: absolute;
+            padding: 15px;
+            font-family: 'Optima';
+            font-weight: bold;
+            font-size: 25;
+            color: antiquewhite;
+            margin-left: 600px;
         }
     </style>
 </head>
@@ -25,6 +36,16 @@
     <div class="scoreboard">
         <p>High Score : <span id="highscore">0</span></p>
         <p>Score : <span id="score">0</span></p>
+    </div>
+    <div class="lighting">
+        <p>Pilih Pencahayaan</p>
+        <select name="light" id="light" style="margin: 2%;">
+            <option value="0">Spot Light</option>
+            <option value="1">Ambient Light</option>
+            <option value="2">Point Light</option>
+            <option value="3">Hemisphere Light</option>
+            <option value="4">Directional Light</option>
+        </select>
     </div>
 </body>
 </html>
@@ -36,18 +57,25 @@
         let x = Math.random() * (to - from);
         return x + from;
     };
+
+    const colorPink = 0xf99999;
+    const colorRed = 0xf95b5b;
+    const colorPurple = 0x845bf9;
+    const colorBlue = 0x5bc9f9;
+    const colorGreen = 0x5ef95b;
     
     let createCube = function() {
         let geometry = new THREE.SphereGeometry(2, 16, 16);
 
         // warna untuk sphere ada 5 jenis
         const colorList = [
-        0xf99999,
-        0xf95b5b,
-        0x845bf9,
-        0x5bc9f9,
-        0x5ef95b,
+        colorPink,
+        colorRed,
+        colorPurple,
+        colorBlue,
+        colorGreen,
         ];
+
         let color = colorList[Math.floor(randomInRange(0, 5))];
         let emissive = color + 0.05;
         
@@ -66,8 +94,8 @@
         scene.add(sphere);
     };
 
-    let scoreCorrect = 10;
-    let scoreWrong = -10;
+    // let scoreCorrect = 10;
+    // let scoreWrong = -10;
     let currentScore = 0;
     let highScore = 0;
     let elementScore = document.getElementById("score");
@@ -92,23 +120,52 @@
             selectedObject.push(intersects);
             originalColors.push(intersects[0].object.material.color.getHex());
     
-            console.log(intersects);
-            console.log(originalColors);
-            console.log(selectedObject);
+            // console.log(intersects);
+            // console.log(originalColors);
+            // console.log(selectedObject);
+
+            let colorObj = "0x" + intersects[0].object.material.color.getHexString();
+
+            if (colorObj == colorPink){
+                currentScore += 20;
+                console.log("Warna: " + colorObj);
+                console.log(currentScore);
+                elementScore.innerHTML = currentScore;
+            } else if(colorObj == colorRed){
+                currentScore -= 30;
+                console.log("Warna: " + colorObj);
+                console.log(currentScore);
+                elementScore.innerHTML = currentScore;
+            } else if(colorObj == colorPurple){
+                currentScore += 40;
+                console.log("Warna: " + colorObj);
+                console.log(currentScore);
+                elementScore.innerHTML = currentScore;
+            } else if(colorObj == colorBlue){
+                currentScore -= 10;
+                console.log("Warna: " + colorObj);
+                console.log(currentScore);
+                elementScore.innerHTML = currentScore;
+            } else if(colorObj == colorGreen){
+                currentScore += 30;
+                console.log("Warna: " + colorObj);
+                console.log(currentScore);
+                elementScore.innerHTML = currentScore;
+            } 
+            else{
+                currentScore += 100;
+                console.log("Warna: " + colorObj);
+                console.log(currentScore);
+                elementScore.innerHTML = currentScore;
+            }
             
             selectedObject.forEach(object => {
-                        object[0].object.geometry.dispose();
-                        object[0].object.material.dispose();
-                        scene.remove(object[0].object);
-                        renderer.renderLists.dispose();
+                object[0].object.geometry.dispose();
+                object[0].object.material.dispose();
+                scene.remove(object[0].object);
+                renderer.renderLists.dispose();
 
-                    });
-                    
-                
-                    currentScore += scoreCorrect;
-                    console.log(currentScore);
-                    elementScore.innerHTML = currentScore;
-
+            });
 
             // kondisi objek yang dipilih lebih dari satu
             // if(selectedObject.length > 1 ) {
@@ -176,6 +233,37 @@
         
         setTimeout(generateCube, speed);
     }
+
+    let lightingEffect = function(){
+        const spot = new THREE.SpotLight(0xffffff, 0.8);
+        spot.position.set(3, 30, 3);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+        ambient.position.set(3, 0, 3);
+        const point = new THREE.PointLight(0xffffff, 1, 100);
+        point.position.set(-10, -10, 0);
+        const hemi = new THREE.HemisphereLight(0x87CEEB, 0x964B00, 1);
+        hemi.position.set(-10, 10, 0);
+        const directional = new THREE.DirectionalLight( 0xffffff );
+        directional.position.set( 0, 1, 1 ).normalize();
+
+        const lights = [spot, ambient, point, hemi, directional];
+
+        lights.forEach((light) => scene.add(light));
+
+        lights.forEach((light) => {
+                light.visible = false;
+        });
+        lights[0].visible = true;
+
+        const selectedLight = document.getElementById('light');
+        selectedLight.addEventListener('change', (e) => {
+                const selected = e.target.value;
+                lights.forEach((light) => {
+                        light.visible = false;
+                });
+                lights[selected].visible = true;
+        });
+    }
     
     // set up the environment - 
     // initiallize scene, camera, objects and renderer
@@ -199,10 +287,13 @@
         scene.add(light2);
         light.position.set(0, 30, 0);
         light2.position.set(0, -30, 0);
+
+        // Lighting effect
+        lightingEffect();
 				
         // membuat dan memasukkan sphere ke dalam scene
         for(let i = 1; i <= 20; i++)
-        createCube();
+            createCube();
 
         // tambah sphere baru
         generateCube();
